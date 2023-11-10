@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     # Internal
     "account",
     "server",
+    "webchat",
     # External
     "rest_framework",
     "drf_spectacular",

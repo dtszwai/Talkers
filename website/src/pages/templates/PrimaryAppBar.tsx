@@ -24,6 +24,14 @@ const PrimaryAppBar = () => {
     </Box>
   )
 
+  const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+    if (event.type === 'keydown' &&
+      ((event as React.KeyboardEvent).key === "Tab" || (event as React.KeyboardEvent).key === "Shift"))
+      return;
+
+    setIsSidebarOpen(open)
+  }
+
   return (
     <AppBar
       sx={{
@@ -37,11 +45,11 @@ const PrimaryAppBar = () => {
           minHeight: theme.primaryAppBar.height,
         }}>
         <Box sx={{ display: { xs: "block", sm: "none" } }}>
-          <IconButton color="inherit" aria-label="open drawer" edge="start" sx={{ mr: 2 }} onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+          <IconButton color="inherit" aria-label="open drawer" edge="start" sx={{ mr: 2 }} onClick={toggleDrawer(!isSidebarOpen)}>
             <MenuIcon />
           </IconButton>
         </Box>
-        <Drawer anchor="left" open={isSidebarOpen}>
+        <Drawer anchor="left" open={isSidebarOpen} onClose={toggleDrawer(false)}>
           {list()}
         </Drawer>
         <Link href="/" underline="none" color="inherit">
