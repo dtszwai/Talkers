@@ -5,7 +5,7 @@ from django.urls import path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.routers import DefaultRouter
 from server.views import ServerListViewSet, CategoryListViewSet
-from webchat.comsumer import MyConsumer
+from webchat.comsumer import WebChatConsumer
 
 router = DefaultRouter()
 router.register("api/server/select", ServerListViewSet)
@@ -17,7 +17,13 @@ urlpatterns = [
     path("api/docs/schema/ui", SpectacularSwaggerView.as_view()),
 ] + router.urls
 
-websocket_urlpatterns = [path("ws/test", MyConsumer.as_asgi())]
+websocket_urlpatterns = [
+    path("<str:serverId>/<str:channelId>", WebChatConsumer.as_asgi())
+]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+
+urlpatterns += staticfiles_urlpatterns()
