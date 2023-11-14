@@ -18,7 +18,11 @@ const router = createBrowserRouter(
           <TestLogin />
         </ProtectedRoute>
       } />
-      <Route path="/server/:serverId/:channelId?" element={<Server />} />
+      <Route path="/server/:serverId/:channelId?" element={
+        // <ProtectedRoute>
+        <Server />
+        // </ProtectedRoute>
+      } />
       <Route path="/explore/:categoryName" element={<Explore />} />
     </Route>
   )
