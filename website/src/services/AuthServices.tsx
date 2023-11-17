@@ -2,8 +2,11 @@ import axios from "axios"
 import { AuthServicesProps } from "../@types/auth-service"
 import { useState } from "react"
 import { BASE_URL } from "../config"
+import { useNavigate } from "react-router-dom"
 
 export const useAuthService = (): AuthServicesProps => {
+  const navigate = useNavigate()
+
   const getInitialLoggedInValue = () => {
     const loggedIn = localStorage.getItem("is_logged_in")
     return loggedIn === 'true';
@@ -27,6 +30,16 @@ export const useAuthService = (): AuthServicesProps => {
     }
   }
 
+  const refreshAccessToken = async () => {
+    try {
+      await axios.post(
+        `${BASE_URL}/token/refresh/`, {}, { withCredentials: true }
+      )
+    } catch (refreshError) {
+      return Promise.reject(refreshError)
+    }
+  }
+
   const login = async (username: string, password: string) => {
     try {
       const response = await axios.post(
@@ -44,12 +57,34 @@ export const useAuthService = (): AuthServicesProps => {
     }
   }
 
-  const logout = () => {
+  const logout = async () => {
     localStorage.setItem("is_logged_in", "false")
     localStorage.removeItem("user_id");
     localStorage.removeItem("username");
     setIsLoggedIn(false)
+    navigate("/login")
+
+    try {
+      await axios.post(
+        `${BASE_URL}/logout/`, {}, { withCredentials: true }
+      )
+    } catch (refreshError) {
+      return Promise.reject(refreshError)
+    }
   }
 
-  return { login, logout, isLoggedIn }
+  const register = async (username: string, password: string) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/register/`,
+        { username, password, },
+        { withCredentials: true }
+      );
+      return response.status
+    } catch (error) {
+      return error.response.status
+    }
+  }
+
+  return { login, logout, register, isLoggedIn, refreshAccessToken }
 }

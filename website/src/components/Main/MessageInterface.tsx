@@ -1,20 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { useParams } from "react-router-dom";
-import useWebSocket from "react-use-websocket"
-import useCrud from "../../hooks/useCrud";
 import { Server } from "../../@types/server";
 import { Avatar, Box, List, ListItem, ListItemAvatar, ListItemText, TextField, Typography, useTheme } from "@mui/material";
 import MessageInterfaceChannel from "./MessageInterfaceChannel";
 import Scroll from "./Scroll";
+import useChatWebSocket from "../../services/chatServices";
 
 interface ServerChannelProps {
   data: Server[];
-}
-
-interface Message {
-  sender: string;
-  content: string;
-  timestamp: string;
 }
 
 interface SendMessageData {
@@ -23,39 +16,13 @@ interface SendMessageData {
 }
 
 const MessageInterface = (props: ServerChannelProps) => {
-  const { data } = props
+  const { data } = props;
   const serverName = data?.[0]?.name ?? "Server"
-  const serverDescription = data?.[0]?.description ?? "This is our home."
+  const { serverId, channelId } = useParams();
+  const { message, setMessage, newMessage, sendJsonMessage } = useChatWebSocket(serverId || "", channelId || "")
   const theme = useTheme()
-  const [newMessage, setNewMessage] = useState<Message[]>([])
-  const [message, setMessage] = useState("")
-  const { serverId, channelId } = useParams()
-  const { fetchData } = useCrud<Server>([], `/messages/?channel_id=${channelId}`)
-  const socketUrl = channelId ? `ws://127.0.0.1:8000/${serverId}/${channelId}` : null;
+  const serverDescription = data?.[0]?.description ?? "This is our home."
 
-  const { sendJsonMessage } = useWebSocket(socketUrl, {
-    onOpen: async () => {
-      try {
-        const data = await fetchData();
-        setNewMessage(Array.isArray(data) ? data : [])
-      } catch (err) {
-        console.error(err);
-      }
-
-    },
-    onClose: (event) => {
-      if (event.code == 4001) console.log('Authentication Error.');
-      console.log('Closed.');
-    },
-    onError: () => {
-      console.log('Error.');
-    },
-    onMessage: (msg) => {
-      const data = JSON.parse(msg.data);
-      setNewMessage(prev_msg => [...prev_msg, data.new_message]);
-      setMessage("")
-    }
-  })
 
   const sendMessage = () => sendJsonMessage({ type: "message", message })
 

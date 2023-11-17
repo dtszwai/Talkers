@@ -7,6 +7,8 @@ from rest_framework.routers import DefaultRouter
 from server.views import ServerListViewSet, CategoryListViewSet
 from account.views import (
     AccountViewSet,
+    LogOutAPIView,
+    RegisterView,
     JWTCookieTokenObtainPairView,
     JWTCookieTokenRefreshView,
 )
@@ -29,6 +31,8 @@ urlpatterns = [
     path(
         "api/token/refresh/", JWTCookieTokenRefreshView.as_view(), name="token_refresh"
     ),
+    path("api/logout/", LogOutAPIView.as_view(), name="logout"),
+    path("api/register/", RegisterView.as_view(), name="register"),
 ] + router.urls
 
 websocket_urlpatterns = [
