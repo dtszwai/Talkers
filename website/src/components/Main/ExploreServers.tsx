@@ -1,4 +1,4 @@
-import { List, ListItem, ListItemButton, ListItemIcon, ListItemText, ListItemAvatar, Avatar, Box, Typography, useTheme, Container, Grid, Card, CardMedia, CardContent } from '@mui/material'
+import { List, ListItem, ListItemIcon, ListItemText, ListItemAvatar, Avatar, Box, Typography, Container, Grid, Card, CardMedia, CardContent } from '@mui/material'
 import useCrud from '../../hooks/useCrud'
 import { useEffect } from 'react'
 import { MEDIA_URL } from '../../config'
@@ -34,7 +34,7 @@ const ExploreServers = () => {
             display: { sm: "block", fontWeight: 700, letterSpacing: "-2px", textTransform: "capitalize" },
             textAlign: { xs: "center", sm: "left" }
           }}>
-          {categoryName || "Popular Channels"}
+          {categoryName || "Popular Servers"}
         </Typography>
       </Box>
       <Box>
@@ -43,10 +43,10 @@ const ExploreServers = () => {
             display: { sm: "block", fontWeight: 700, letterSpacing: "-1px" },
             textAlign: { xs: "center", sm: "left" }
           }}>
-          {categoryName ? `Channels talking about ${categoryName}` : "Check out some of our popular channels"}
+          {categoryName ? `Servers talking about ${categoryName}` : "Check out some of our popular Servers"}
         </Typography>
       </Box>
-      <Typography variant='h6' sx={{ pt: 6, pb: 1, fontWeight: 700, letterSpacing: "-1px" }}>Recommanded Channels</Typography>
+      <Typography variant='h6' sx={{ pt: 6, pb: 1, fontWeight: 700, letterSpacing: "-1px" }}>Recommanded Servers</Typography>
       <Grid container spacing={{ xs: 0, sm: 2 }}>
         {dataCRUD.map(item => (
           <Grid item key={item.id} xs={12} sm={6} md={6} lg={3}>
@@ -57,7 +57,7 @@ const ExploreServers = () => {
                   component="img"
                   image={item.banner ? `${MEDIA_URL}${item.banner}` : `https://source.unsplash.com/random?sig=${item.id}`}
                   alt="random"
-                  sx={{ display: { xs: "none", sm: "block" } }} />
+                  sx={{ display: { xs: "none", sm: "block" }, alignItems: "center", maxHeight: "150px", maxWidth: "300px" }} />
                 <CardContent sx={{ flexGrow: 1, p: 0, "&:last-child": { paddingBottom: 0 } }}>
                   <List>
                     <ListItem disablePadding>

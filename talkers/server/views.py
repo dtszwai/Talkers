@@ -1,9 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.db.models import Count
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError, AuthenticationFailed
+from rest_framework.decorators import action
 from drf_spectacular.utils import extend_schema
 from .schema import server_list_docs
 from .serializer import ServerSerializer, CategorySerializer
@@ -44,9 +45,6 @@ class ServerListViewSet(viewsets.ViewSet):
             self.queryset = self.queryset.annotate(num_members=Count("member"))
 
         if by_serverid:
-            # if not request.user.is_authenticated:
-            #     raise AuthenticationFailed()
-
             try:
                 self.queryset = self.queryset.filter(id=by_serverid)
                 if not self.queryset.exists():
@@ -63,3 +61,45 @@ class ServerListViewSet(viewsets.ViewSet):
             self.queryset, many=True, context={"num_members": with_num_members}
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ServerMembershipViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
+
+    def create(self, request, server_id):
+        server = get_object_or_404(Server, id=server_id)
+        user = request.user
+        if server.member.filter(id=user.id).exists():
+            return Response(
+                {"error": "User is already a member."}, status=status.HTTP_409_CONFLICT
+            )
+        server.member.add(user)
+        return Response(
+            {"message": "User joined server successfully."},
+            status=status.HTTP_201_CREATED,
+        )
+
+    @action(detail=False, methods=["DELETE"])
+    def remove_member(self, request, server_id):
+        server = get_object_or_404(Server, id=server_id)
+        user = request.user
+        if not server.member.filter(id=user.id).exists():
+            return Response(
+                {"error": "User is not a member."}, status=status.HTTP_404_NOT_FOUND
+            )
+        if server.owner == user:
+            return Response(
+                {"error": "Owner cannot be removed as a member."},
+                status=status.HTTP_409_CONFLICT,
+            )
+        server.member.remove(user)
+        return Response(
+            {"message": "User removed from server."}, status=status.HTTP_200_OK
+        )
+
+    @action(detail=False, methods=["GET"])
+    def is_member(self, request, server_id=None):
+        server = get_object_or_404(Server, id=server_id)
+        user = request.user
+        is_member = server.member.filter(id=user.id).exists()
+        return Response({"is_member": is_member})

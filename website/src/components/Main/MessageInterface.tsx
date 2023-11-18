@@ -41,8 +41,8 @@ const MessageInterface = (props: ServerChannelProps) => {
   const formatTimeStamp = (timestamp: string) => {
     const date = new Date(Date.parse(timestamp));
     const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
-    const options = { hour: "2-digit", minute: "2-digit", hour12: true } as Intl.DateTimeFormatOptions
-    const formattedTime = new Intl.DateTimeFormat('zh-HK', options).format(date);
+    const options = { hour: "numeric", minute: "2-digit", hour12: false } as Intl.DateTimeFormatOptions
+    const formattedTime = new Intl.DateTimeFormat(undefined, options).format(date);
 
     return `${formattedDate} ${formattedTime}`
   }

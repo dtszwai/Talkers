@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.urls import path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.routers import DefaultRouter
-from server.views import ServerListViewSet, CategoryListViewSet
+from server.views import ServerListViewSet, CategoryListViewSet, ServerMembershipViewSet
 from account.views import (
     AccountViewSet,
     LogOutAPIView,
@@ -20,6 +20,11 @@ router.register("api/server/select", ServerListViewSet)
 router.register("api/server/category", CategoryListViewSet)
 router.register("api/messages", MessageViewSet, basename="message")
 router.register("api/account", AccountViewSet, basename="account")
+router.register(
+    r"api/membership/(?P<server_id>\d+)",
+    ServerMembershipViewSet,
+    basename="server-membership",
+)
 
 urlpatterns = [
     path("admin/", admin.site.urls),

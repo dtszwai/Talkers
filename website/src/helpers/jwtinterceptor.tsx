@@ -27,7 +27,7 @@ const useAxiosWithInterceptor = (): AxiosInstance => {
           return Promise.reject(refreshError);
         }
       }
-      throw error;
+      return Promise.reject(error)
     }
   )
   return jwtAxios

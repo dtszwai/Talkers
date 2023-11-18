@@ -5,6 +5,7 @@ import ServerChannel from "../SecondaryDrawer/ServerChannel";
 import { MoreVert } from "@mui/icons-material";
 import { AppBar, Avatar, Box, Drawer, IconButton, ListItemAvatar, Toolbar, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useParams } from "react-router-dom";
+import JoinServerButton from "../Membership/JoinServerButton";
 
 interface ServerChannelProps {
   data: Server[];
@@ -73,7 +74,9 @@ const MessageInterfaceChannel = (props: ServerChannelProps) => {
           <Typography noWrap component="div">
             {channelName}
           </Typography>
-          <Box sx={{ flexGrow: 1 }}></Box>
+          <Box sx={{ flexGrow: 1 }}>
+            <JoinServerButton />
+          </Box>
           <Box sx={{ display: { xs: "block", sm: "none" } }}>
             <IconButton color="inherit" edge="end" onClick={toggleDrawer(true)}>
               <MoreVert />
